@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'properties.dart';
+import 'package:utopia_wm/src/properties.dart';
 
 typedef WindowProperties = Map<WindowPropertyKey, Object?>;
 

@@ -9,22 +9,17 @@ import 'package:utopia_wm/src/layout.dart';
 mixin LayoutEvents on WindowEventHandler {
   @override
   void onEvent(WindowEvent event) {
-    if (event is WindowMinimizeEvent) {
-      return onMinimize(event.minimized);
-    } else if (event is WindowFullscreenEvent) {
-      return onFullscreen(event.fullscreen);
-    } else if (event is WindowDockChangeEvent) {
-      return onDockChanged(event.dock);
-    } else if (event is WindowSizeChangeEvent) {
-      return onSizeChanged(event.size);
-    } else if (event is WindowPositionChangeEvent) {
-      return onPositionChanged(event.position);
-    } else if (event is WindowAlwaysOnTopChangeEvent) {
-      return onAlwaysOnTopChanged(event.alwaysOnTop);
-    } else if (event is WindowAlwaysOnTopModeChangeEvent) {
-      return onAlwaysOnTopModeChanged(event.alwaysOnTopMode);
-    }
-    super.onEvent(event);
+    return switch (event) {
+      WindowMinimizeEvent() => onMinimize(event.minimized),
+      WindowFullscreenEvent() => onFullscreen(event.fullscreen),
+      WindowDockChangeEvent() => onDockChanged(event.dock),
+      WindowSizeChangeEvent() => onSizeChanged(event.size),
+      WindowPositionChangeEvent() => onPositionChanged(event.position),
+      WindowAlwaysOnTopChangeEvent() => onAlwaysOnTopChanged(event.alwaysOnTop),
+      WindowAlwaysOnTopModeChangeEvent() =>
+        onAlwaysOnTopModeChanged(event.alwaysOnTopMode),
+      _ => super.onEvent(event),
+    };
   }
 
   /// Handler for [WindowMinimizeEvent] events.

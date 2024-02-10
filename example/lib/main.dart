@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:example/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:utopia_wm/wm.dart';
 
@@ -14,7 +12,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +43,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -133,146 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class StaggeredLayoutDelegate extends LayoutDelegate {
-  const StaggeredLayoutDelegate();
-
-  static const double half = 0.5;
-  static const double third = 1 / 3;
-
-  @override
-  Widget layout(
-    BuildContext context,
-    List<LiveWindowEntry> entries,
-    List<String> focusHierarchy,
-  ) {
-    if (entries.isEmpty) return const SizedBox();
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final WindowHierarchyController hierarchy = WindowHierarchy.of(context);
-        final List<MapEntry<int, double>> tiles;
-        final int crossAxisCount;
-
-        switch (entries.length) {
-          case 1:
-            crossAxisCount = 1;
-            tiles = const [
-              MapEntry(1, 1),
-            ];
-            break;
-          case 2:
-            crossAxisCount = 2;
-            tiles = const [
-              MapEntry(1, 1),
-              MapEntry(1, 1),
-            ];
-            break;
-          case 3:
-            crossAxisCount = 2;
-            tiles = const [
-              MapEntry(1, 1),
-              MapEntry(1, half),
-              MapEntry(1, half),
-            ];
-            break;
-          case 4:
-            crossAxisCount = 2;
-            tiles = const [
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-            ];
-            break;
-          case 5:
-            crossAxisCount = 3;
-            tiles = const [
-              MapEntry(1, 1),
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-            ];
-            break;
-          case 6:
-            crossAxisCount = 3;
-            tiles = const [
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-              MapEntry(1, half),
-            ];
-            break;
-          case 7:
-            crossAxisCount = 3;
-            tiles = const [
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(3, third),
-            ];
-            break;
-          case 8:
-            crossAxisCount = 6;
-            tiles = const [
-              MapEntry(2, third),
-              MapEntry(2, third),
-              MapEntry(2, third),
-              MapEntry(2, third),
-              MapEntry(2, third),
-              MapEntry(2, third),
-              MapEntry(3, third),
-              MapEntry(3, third),
-            ];
-            break;
-          case 9:
-            crossAxisCount = 3;
-            tiles = const [
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-              MapEntry(1, third),
-            ];
-            break;
-          default:
-            throw Exception(":(");
-        }
-
-        return StaggeredGrid.count(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: 2,
-          mainAxisSpacing: 2,
-          children: entries
-              .mapIndexed(
-                (index, e) => StaggeredGridTile.extent(
-                  crossAxisCellCount: tiles[index].key,
-                  mainAxisExtent:
-                      tiles[index].value * hierarchy.wmBounds.height,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => MediaQuery(
-                      data: MediaQueryData(size: constraints.smallest),
-                      child: e.view,
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-        );
-      },
-    );
-  }
-}
-
 class WallpaperWindowFeature extends WindowFeature {
   static const WindowPropertyKey<ImageProvider?> image =
       WindowPropertyKey("features.wallpaper.image", null);
@@ -322,7 +180,7 @@ class FreeDragWindowFeature extends WindowFeature {
 class ClockWidget extends StatefulWidget {
   final Size globalSize;
 
-  const ClockWidget({required this.globalSize, Key? key}) : super(key: key);
+  const ClockWidget({required this.globalSize, super.key});
 
   @override
   State<ClockWidget> createState() => _ClockWidgetState();

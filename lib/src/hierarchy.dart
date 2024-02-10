@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:utopia_wm/src/entry.dart';
 import 'package:utopia_wm/src/layout.dart';
-import 'entry.dart';
-import 'registry.dart';
+import 'package:utopia_wm/src/registry.dart';
 
 /// The class that is responsible of actually building the windows using the provided [layoutDelegate].
 ///

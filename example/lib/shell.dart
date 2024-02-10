@@ -6,7 +6,7 @@ import 'package:utopia_wm/wm.dart';
 import 'components/taskbar.dart';
 
 class ShellDirector extends StatefulWidget {
-  const ShellDirector({Key? key}) : super(key: key);
+  const ShellDirector({super.key});
 
   @override
   State<ShellDirector> createState() => ShellDirectorState();

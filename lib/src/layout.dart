@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 import 'package:utopia_wm/src/entry.dart';
 import 'package:utopia_wm/src/events/layout.dart';
@@ -20,6 +21,7 @@ abstract class LayoutDelegate<T extends LayoutInfo> {
 
   /// This method is used internally from utopia to build the layout.
   /// It is recommended NOT to override it as there should be no need.
+  @nonVirtual
   Widget buildAndLayout(
     BuildContext context,
     List<LiveWindowEntry> entries,

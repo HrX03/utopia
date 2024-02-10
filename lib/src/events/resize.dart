@@ -6,12 +6,11 @@ import 'package:utopia_wm/src/events/base.dart';
 mixin ResizeEvents on WindowEventHandler {
   @override
   void onEvent(WindowEvent event) {
-    if (event is WindowResizeStartEvent) {
-      return onStartResize();
-    } else if (event is WindowResizeEndEvent) {
-      return onEndResize();
-    }
-    super.onEvent(event);
+    return switch (event) {
+      WindowResizeStartEvent() => onStartResize(),
+      WindowResizeEndEvent() => onEndResize(),
+      _ => super.onEvent(event),
+    };
   }
 
   /// Handler for [WindowResizeStartEvent] events.

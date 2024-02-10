@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:utopia_wm/src/entry.dart';
 import 'package:utopia_wm/src/features/features.dart';
 import 'package:utopia_wm/src/registry.dart';
-
-import 'entry.dart';
 
 /// Base class for the properties API for the registry.
 ///

@@ -56,24 +56,15 @@ enum _MessageMode {
   error,
   warning,
   notice,
-  easterEgg,
-}
-
-enum _Games {
-  none,
-  pi,
 }
 
 enum _Blockable {
-  opertors,
+  operators,
   digits,
   equals,
 }
 
 class _CalculatorHomeState extends State<CalculatorHome> {
-  // Statics
-  TextSelection _currentSelection =
-      const TextSelection(baseOffset: 0, extentOffset: 0);
   final GlobalKey _textFieldKey = GlobalKey();
   final textFieldPadding = const EdgeInsets.only(right: 8.0);
   static TextStyle textFieldTextStyle =
@@ -100,28 +91,21 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   /// What to block.
   List<_Blockable> _blocking = [];
 
-  /// Whether or not the result is an Easter egg.
-  /// Refrain from using this for real calculations.
-  bool _egged = false;
   // Secondary Error
   _MessageMode _secondaryErrorType = _MessageMode.error;
   bool _secondaryErrorVisible = false;
   String _secondaryErrorValue = "";
-  // Game Mode
-  final _Games _game = _Games.none;
 
   void _setSecondaryError(
     String message, [
     _MessageMode type = _MessageMode.error,
-  ]) {
+  ]) async {
     _secondaryErrorValue = message;
     _secondaryErrorType = type;
     // The following is slightly convoluted for "show this for 3 seconds and fade out"
     setState(() => _secondaryErrorVisible = true);
-    (() async {
-      await Future.delayed(const Duration(seconds: 3));
-      setState(() => _secondaryErrorVisible = false);
-    })();
+    await Future.delayed(const Duration(seconds: 3));
+    setState(() => _secondaryErrorVisible = false);
   }
 
   void _onTextChanged() {
@@ -158,10 +142,6 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   void _append(String character) {
     setState(() {
       if (_controller.selection.baseOffset >= 0) {
-        _currentSelection = TextSelection(
-          baseOffset: _controller.selection.baseOffset + 1,
-          extentOffset: _controller.selection.extentOffset + 1,
-        );
         _controller.text =
             _controller.text.substring(0, _controller.selection.baseOffset) +
                 character +
@@ -169,7 +149,10 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                   _controller.selection.baseOffset,
                   _controller.text.length,
                 );
-        _controller.selection = _currentSelection;
+        _controller.selection = TextSelection(
+          baseOffset: _controller.selection.baseOffset + 1,
+          extentOffset: _controller.selection.extentOffset + 1,
+        );
       } else {
         _controller.text += character;
       }
@@ -181,35 +164,18 @@ class _CalculatorHomeState extends State<CalculatorHome> {
     setState(() {
       if (_errored || _solved || longPress) {
         _errored = false;
-        _egged = false;
         _solved = false;
         _controller.text = '';
         _blocking = [];
-      } else {
-        // if (_controller.selection.baseOffset >= 0) {
-        //   _currentSelection = TextSelection(
-        //       baseOffset: _controller.selection.baseOffset - 1,
-        //       extentOffset: _controller.selection.extentOffset - 1);
-        //   _controller.text = _controller.text
-        //           .substring(0, _controller.selection.baseOffset - 1) +
-        //       _controller.text.substring(
-        //           _controller.selection.baseOffset, _controller.text.length);
-        //   _controller.selection = _currentSelection;
-        // } else {
-        if (_controller.text.isNotEmpty) {
-          _controller.text =
-              _controller.text.substring(0, _controller.text.length - 1);
-        }
-        // }
+      } else if (_controller.text.isNotEmpty) {
+        _controller.text =
+            _controller.text.substring(0, _controller.text.length - 1);
       }
     });
     _onTextChanged();
   }
 
-  int errorcount = 0;
-
   void _equals() {
-    String originalExp = _controller.text.toString();
     if (_blocking.contains(_Blockable.equals)) {
       _setSecondaryError("Cannot use this now", _MessageMode.warning);
       return;
@@ -274,42 +240,13 @@ class _CalculatorHomeState extends State<CalculatorHome> {
         if (_controller.text == "NaN") {
           _controller.text = "Impossible";
           _errored = true;
-        } else if (originalExp.startsWith("4÷1")) {
-          _setSecondaryError(
-            "Happy April Fools' Day!",
-            _MessageMode.easterEgg,
-          );
-          if (DateTime.now().month == DateTime.april &&
-              DateTime.now().day == 1) {
-            _controller.text = "https://youtu.be/bxqLsrlakK8";
-            _errored = true;
-            _egged = true;
-          }
         } else {
           _solved = true;
         }
         _blocking = [];
       } catch (e) {
-        if (errorcount < 5 && originalExp == "error+123") {
-          _controller.text = 'Congratulations!';
-          _errored = true;
-          _egged = true;
-        } else if (originalExp == "(×.×)") {
-          _controller.text = 'dead';
-          _errored = true;
-          _egged = true;
-        } else if (originalExp == "you little...π" ||
-            originalExp == "you little...!") {
-          _controller.text = 'warning';
-          _errored = true;
-        } else if (errorcount > 5) {
-          _controller.text = 'you little...';
-          _errored = true;
-        } else {
-          _controller.text = 'error';
-          _errored = true;
-        }
-        errorcount++;
+        _controller.text = 'error';
+        _errored = true;
       }
     });
     _onTextChanged();
@@ -326,13 +263,12 @@ class _CalculatorHomeState extends State<CalculatorHome> {
     onPress ??= () {
       if (_errored || (_solved && !isOperator)) {
         _errored = false;
-        _egged = false;
         _solved = false;
         _blocking = [];
         _controller.text = '';
       } else if (_solved && isOperator) {
         _solved = false;
-        _blocking = [_Blockable.opertors, _Blockable.equals];
+        _blocking = [_Blockable.operators, _Blockable.equals];
       } else if (_blocking.contains(blockingCategory)) {
         _setSecondaryError("Cannot use that now", _MessageMode.warning);
         return;
@@ -398,26 +334,6 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                 style: const TextStyle(color: Colors.grey),
               ),
             ),
-            AnimatedOpacity(
-              opacity: _game != _Games.none ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: (_game != _Games.none)
-                  ? IconButton(
-                      icon: const Icon(Icons.videogame_asset_outlined),
-                      onPressed: _game == _Games.pi
-                          ? null /* TODO: set the prior to the Digits of Pi game */
-                          : null,
-                      color: Theme.of(context).colorScheme.secondary,
-                    )
-                  : Padding(
-                      //make the illusion that it's still there
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.videogame_asset_outlined,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-            )
           ],
         ),
       ),
@@ -438,11 +354,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                   style: textFieldTextStyle.copyWith(
                     fontSize: _fontSize,
                     fontWeight: _solved ? FontWeight.bold : null,
-                    color: _egged
-                        ? Colors.lightBlue[400]
-                        : _errored
-                            ? Colors.red
-                            : null,
+                    color: _errored ? Colors.red : null,
                   ),
                   focusNode: AlwaysDisabledFocusNode(),
                 ),
@@ -474,11 +386,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                                               .textTheme
                                               .bodyLarge
                                               ?.color
-                                          : _secondaryErrorType ==
-                                                  _MessageMode.easterEgg
-                                              ? Colors.lightBlue
-                                              : Colors
-                                                  .red, //even though this slot will never be used
+                                          : Colors.red,
                               fontSize: 20.0,
                             ),
                           ),
@@ -611,10 +519,10 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                                           _buildButton(
                                             '%',
                                             blockingCategory:
-                                                _Blockable.opertors,
+                                                _Blockable.operators,
                                             block: () => _blocking = [
                                               _Blockable.equals,
-                                              _Blockable.opertors
+                                              _Blockable.operators,
                                             ],
                                           ),
                                           _buildButton(
@@ -625,10 +533,10 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                                           _buildButton(
                                             '.',
                                             blockingCategory:
-                                                _Blockable.opertors,
+                                                _Blockable.operators,
                                             block: () => _blocking = [
                                               _Blockable.equals,
-                                              _Blockable.opertors
+                                              _Blockable.operators,
                                             ],
                                           ),
                                         ],
@@ -646,34 +554,34 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                           children: <Widget>[
                             _buildButton(
                               '÷',
-                              blockingCategory: _Blockable.opertors,
+                              blockingCategory: _Blockable.operators,
                               block: () => _blocking = [
                                 _Blockable.equals,
-                                _Blockable.opertors
+                                _Blockable.operators,
                               ],
                             ),
                             _buildButton(
                               '×',
-                              blockingCategory: _Blockable.opertors,
+                              blockingCategory: _Blockable.operators,
                               block: () => _blocking = [
                                 _Blockable.equals,
-                                _Blockable.opertors
+                                _Blockable.operators,
                               ],
                             ),
                             _buildButton(
                               '-',
-                              blockingCategory: _Blockable.opertors,
+                              blockingCategory: _Blockable.operators,
                               block: () => _blocking = [
                                 _Blockable.equals,
-                                _Blockable.opertors
+                                _Blockable.operators,
                               ],
                             ),
                             _buildButton(
                               '+',
-                              blockingCategory: _Blockable.opertors,
+                              blockingCategory: _Blockable.operators,
                               block: () => _blocking = [
                                 _Blockable.equals,
-                                _Blockable.opertors
+                                _Blockable.operators,
                               ],
                             ),
                             _buildButton(
@@ -829,7 +737,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

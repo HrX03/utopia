@@ -8,9 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:utopia_wm/src/events/base.dart';
 import 'package:utopia_wm/src/features/base.dart';
 import 'package:utopia_wm/src/layout.dart';
+import 'package:utopia_wm/src/registry.dart';
 import 'package:uuid/uuid.dart';
-
-import 'registry.dart';
 
 typedef LayoutInfoOverrideCallback = LayoutInfo Function(LayoutInfo info);
 
@@ -410,7 +409,9 @@ class _WindowRecorderState extends State<_WindowRecorder> {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           widget.texture.provideFrame(actualImage);
         });
-      } catch (e) {}
+      } catch (e) {
+        // we good, this code gets executed every 10 ms, if we skip once it good
+      }
     });
   }
 

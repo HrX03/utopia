@@ -6,14 +6,12 @@ import 'package:utopia_wm/src/events/base.dart';
 mixin ToolbarEvents on WindowEventHandler {
   @override
   void onEvent(WindowEvent event) {
-    if (event is WindowCloseButtonPressEvent) {
-      return onCloseButtonPress();
-    } else if (event is WindowMaximizeButtonPressEvent) {
-      return onMaximizeButtonPress();
-    } else if (event is WindowMinimizeButtonPressEvent) {
-      return onMinimizeButtonPress();
-    }
-    super.onEvent(event);
+    return switch (event) {
+      WindowCloseButtonPressEvent() => onCloseButtonPress(),
+      WindowMaximizeButtonPressEvent() => onMaximizeButtonPress(),
+      WindowMinimizeButtonPressEvent() => onMinimizeButtonPress(),
+      _ => super.onEvent(event),
+    };
   }
 
   /// Handler for [WindowCloseButtonPressEvent] events.

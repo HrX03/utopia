@@ -12,8 +12,8 @@ class Taskbar extends StatefulWidget {
 
   const Taskbar({
     required this.controller,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<Taskbar> createState() => _TaskbarState();
@@ -263,7 +263,7 @@ class _EntryButtonState extends State<_EntryButton> {
 }
 
 class _DateWidget extends StatefulWidget {
-  const _DateWidget({Key? key}) : super(key: key);
+  const _DateWidget();
 
   @override
   _DateWidgetState createState() => _DateWidgetState();

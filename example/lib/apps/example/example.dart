@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:utopia_wm/wm.dart';
 
 class ExampleApp extends StatelessWidget {
-  const ExampleApp({Key? key}) : super(key: key);
+  const ExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,12 @@ class ExampleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       shortcuts: const {},
       home: const MyHomePage(),
-      useInheritedMediaQuery: true,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();

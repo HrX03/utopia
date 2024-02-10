@@ -2,10 +2,9 @@ import 'package:flutter/widgets.dart';
 
 class AdvancedPageController extends PageController {
   AdvancedPageController({
-    int initialPage = 0,
+    super.initialPage,
     double initialViewportFraction = 1.0,
-  })  : _viewportFraction = initialViewportFraction,
-        super(initialPage: initialPage);
+  }) : _viewportFraction = initialViewportFraction;
 
   double? _viewportFraction;
   @override

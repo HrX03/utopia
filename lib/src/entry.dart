@@ -182,6 +182,7 @@ class LiveWindowEntry {
     required this.registry,
     this.eventHandler,
   }) : texture = WindowTexture() {
+    eventHandler?._entry = this;
     _view = MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: registry),
@@ -204,6 +205,7 @@ class LiveWindowEntry {
   /// disposal when needed.
   void dispose() {
     _view = null;
+    eventHandler?._entry = null;
     texture.dispose();
     _disposed = true;
   }
@@ -272,10 +274,10 @@ class _WindowWrapperState extends State<WindowWrapper> {
 /// method or by mixing in the various event helpers provided by the lib, like
 /// [ResizeEvents] or [LayoutEvents].
 abstract class WindowEventHandler {
-  late LiveWindowEntry _entry;
+  LiveWindowEntry? _entry;
 
   /// The entry this event handler is associated with.
-  LiveWindowEntry get entry => _entry;
+  LiveWindowEntry get entry => _entry!;
 
   /// Overriding this method allows to receive and react to an event.
   /// In order to react you just return the handler.

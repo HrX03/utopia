@@ -118,6 +118,7 @@ class Launcher extends StatelessWidget {
             overrideProperties: Map.from(properties)
               ..putIfAbsent(WindowEntry.icon, () => appEntry.icon)
               ..putIfAbsent(WindowEntry.title, () => appEntry.name),
+            eventHandler: LogWindowEventHandler(),
           ),
         );
 
@@ -165,11 +166,21 @@ class PaddedContentWindowFeature extends WindowFeature {
   }
 }
 
-class LogWindowEventHandler extends WindowEventHandler {
+class LogWindowEventHandler extends WindowEventHandler with FocusEvents {
   @override
   void onEvent(WindowEvent event) {
     if (kDebugMode) print(event);
 
     super.onEvent(event);
+  }
+
+  @override
+  void onFocusGain() {
+    print("Focused ${entry.registry.info.id}");
+  }
+
+  @override
+  void onFocusLost() {
+    print("Lost focus ${entry.registry.info.id}");
   }
 }

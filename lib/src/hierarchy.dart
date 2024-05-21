@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:utopia_wm/src/entry.dart';
+import 'package:utopia_wm/src/events/focus.dart';
 import 'package:utopia_wm/src/layout.dart';
 import 'package:utopia_wm/src/registry.dart';
 
@@ -170,14 +171,19 @@ class WindowHierarchyController with ChangeNotifier {
   /// Returns every window that is allowed to be shown on an eventual taskbar.
   ///
   /// To get the list of every single entry without filters use [rawEntries].
-  List<LiveWindowEntry> get entries => _entries
-      .where(
-        (e) => e.registry.info.showOnTaskbar,
-      )
-      .toList();
+  List<LiveWindowEntry> get entries =>
+      _entries.where((e) => e.registry.info.showOnTaskbar).toList();
+
+  Map<String, LiveWindowEntry> get mappedEntries => Map.fromEntries(
+        entries.map((e) => MapEntry(e.registry.info.id, e)),
+      );
 
   /// Returns the raw contents of the internally managed entry list of the controller.
   List<LiveWindowEntry> get rawEntries => List.unmodifiable(_entries);
+
+  Map<String, LiveWindowEntry> get rawMappedEntries => Map.fromEntries(
+        rawEntries.map((e) => MapEntry(e.registry.info.id, e)),
+      );
 
   /// Returns the focus hierarchy of the currently shown windows. This list is
   /// guaranteed to have as many items as [rawEntries].
@@ -222,6 +228,14 @@ class WindowHierarchyController with ChangeNotifier {
     _checkForInitialized();
     final int idIndex = _focusHierarchy.indexWhere((element) => element == id);
     final String poppedId = _focusHierarchy.removeAt(idIndex);
+
+    rawMappedEntries[_focusHierarchy.last]
+        ?.eventHandler
+        ?.onEvent(WindowFocusLost(timestamp: DateTime.now()));
+    rawMappedEntries[id]
+        ?.eventHandler
+        ?.onEvent(WindowFocusGain(timestamp: DateTime.now()));
+
     _focusHierarchy.add(poppedId);
     notifyListeners();
     _state._requestRebuild();
